@@ -1,0 +1,20 @@
+{
+  "name": "dungeon-keeper",
+  "version": "0.0.0",
+  "authors": [
+    "cloakedninjas <daniel@cloakedninjas.co.uk>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "phaser": "~2.3.0",
+    "phaser-plugin-isometric": "git@github.com:lewster32/phaser-plugin-isometric.git"
+  }
+}
