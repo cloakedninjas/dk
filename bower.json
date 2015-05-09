@@ -16,5 +16,8 @@
   "dependencies": {
     "phaser": "~2.3.0",
     "phaser-plugin-isometric": "git@github.com:lewster32/phaser-plugin-isometric.git"
+  },
+  "devDependencies": {
+    "lodash": "~3.8.0"
   }
 }

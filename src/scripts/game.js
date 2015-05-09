@@ -10,7 +10,7 @@ var DK;
     var Game = (function (_super) {
         __extends(Game, _super);
         function Game() {
-            var dpr = 1, width = 768 * dpr, height = 1024 * dpr;
+            var dpr = 1, width = window.innerWidth * dpr, height = window.innerHeight * dpr;
             _super.call(this, width, height, Phaser.CANVAS, 'content', null);
             /*
              this.canvas.width *= window.devicePixelRatio;

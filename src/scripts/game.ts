@@ -5,8 +5,8 @@ module DK {
 
         constructor() {
             var dpr = 1, //window.devicePixelRatio,
-                width = 768 * dpr,
-                height = 1024 * dpr;
+                width = window.innerWidth * dpr,
+                height = window.innerHeight * dpr;
 
             super(width, height, Phaser.CANVAS, 'content', null);
 
