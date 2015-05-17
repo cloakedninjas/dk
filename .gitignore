@@ -1,3 +1,5 @@
 .idea
 node_modules
 src/components
+src/scripts/**/*.js
+src/scripts/**/*.js.map
