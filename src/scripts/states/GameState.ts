@@ -3,10 +3,10 @@
 module DK {
 
     export class GameState extends Phaser.State {
-        isoGroup: Phaser.Group;
+        isoGroup: IsoWorld;
 
         create() {
-            game.time.advancedTiming = true;
+            //game.time.advancedTiming = true;
 
             // Add and enable the plug-in.
             //game.plugins.add(new Phaser.Plugin.Isometric(game));
@@ -22,8 +22,6 @@ module DK {
         }
 
         spawnTiles() {
-            var isoGroup = game.add.group();
-
             var mapData = game.cache.getJSON('map-data');
             var tiles = mapData.layers[0];
             var tileLookup = {};
@@ -40,36 +38,10 @@ module DK {
 
             });
 
-            //console.log(tileLookup);
-
-            var tile;
-            for (var y = 0; y < tiles.height; y++) {
-                for (var x = 0; x < tiles.width; x++) {
-
-                    index = (y * tiles.width) + x;
-                    textureId = tiles.data[index];
-
-                    //console.log(index, textureId);
-
-                    //xx = x * 70;
-                    //yy = y * 70;
-/*
-                    if (textureId === 2) {
-                        console.log(xx, yy);
-                    }
-*/
-
-                    if (textureId !== 0) {
-                        tile = new IsoTile(this.game, x, y, tileLookup[textureId], 0);
-                        isoGroup.add(tile);
-                        //tile = game.add.sprite(x, y, 0, tileLookup[textureId], 0, isoGroup);
-                        //tile.anchor.set(0, 0);
-                    }
-                }
-            }
-
-            this.isoGroup = isoGroup;
+            this.isoGroup = new IsoWorld(this.game);
+            this.isoGroup.setTiles(tiles, tileLookup);
         }
+
 
         render () {
             /*this.isoGroup.forEach(function (tile) {
