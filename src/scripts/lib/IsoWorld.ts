@@ -5,7 +5,10 @@ module DK {
 
         anchor: Phaser.Point;
         tileSize: Object;
+        halfTileSize: Object;
         cursors: Phaser.CursorKeys;
+
+        plop: Phaser.Signal;
 
         constructor (game: Phaser.Game, parent?: PIXI.DisplayObjectContainer, name?: string, addToStage?: boolean, enableBody?: boolean, physicsBodyType?: number) {
             super(game, parent, name, addToStage, enableBody, physicsBodyType);
@@ -15,8 +18,15 @@ module DK {
                 height: 64
             };
 
+            this.halfTileSize = {
+                width: this.tileSize.width / 2,
+                height: this.tileSize.height / 2
+            };
+
+            // bind inputs
             this.cursors = game.input.keyboard.createCursorKeys();
-            //this.game.camera.follow(this);
+
+            game.input.addMoveCallback(this.handleMouseMove, this);
         }
 
         setTiles (tiles, tileLookup) {
@@ -45,19 +55,35 @@ module DK {
         update () {
             super.update();
 
+            var scrollAmount = 10;
+
             if (this.cursors.up.isDown) {
-                this.position.add(0, 10);
+                this.position.add(0, scrollAmount);
             }
             else if (this.cursors.down.isDown) {
-                this.position.add(0, -10);
+                this.position.add(0, -scrollAmount);
             }
 
             if (this.cursors.left.isDown)  {
-                this.position.add(10, 0);
+                this.position.add(scrollAmount, 0);
             }
             else if (this.cursors.right.isDown) {
-                this.position.add(-10, 0);
+                this.position.add(-scrollAmount, 0);
             }
+        }
+
+        handleMouseMove (e) {
+            var isoCoords = this.screenToIso(e.screenX, e.screenY);
+        }
+
+        screenToIso (x, y) {
+            var isoX = (x / (this.tileSize.width / 2) + y / (this.tileSize.width / 2) / 2);
+
+            console.log(isoX);
+            /*var x = point.x - (this.game.world.width * this.anchor.x);
+            var y = point.y - (this.game.world.height * this.anchor.y) + z;*/
+
+            //return new Phaser.Point(posX, posY);
         }
 
     }

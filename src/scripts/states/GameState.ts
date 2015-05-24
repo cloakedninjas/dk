@@ -29,6 +29,9 @@ module DK {
             var index;
             var textureId;
 
+            /**
+             * @param tileset.firstgid
+             */
             _.each(mapData.tilesets, function (tileset) {
                 lastGid = tileset.firstgid;
 

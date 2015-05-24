@@ -29,6 +29,9 @@ var DK;
             var lastGid = 0;
             var index;
             var textureId;
+            /**
+             * @param tileset.firstgid
+             */
             _.each(mapData.tilesets, function (tileset) {
                 lastGid = tileset.firstgid;
                 _.each(tileset.tileproperties, function (properties, tileId) {
