@@ -3,6 +3,7 @@
 module DK {
     export class IsoWorld extends Phaser.Group {
 
+        children: [IsoTile];
         anchor: Phaser.Point;
         tileSize: {
             width: number
@@ -54,9 +55,10 @@ module DK {
             var xOffset = (tiles.width * this.tileSize.width) / 2,
                 yOffset = 0; //(tiles.height * this.tileSize.height) / 2;
 
-            //console.log(xOffset, yOffset);
             this.position.setTo(xOffset, yOffset);
-            this.game.world.setBounds(0, 0, tiles.width * this.tileSize.width, tiles.height * this.tileSize.height);
+            this.game.world.setBounds(0, -this.tileSize.height / 2, tiles.width * this.tileSize.width, tiles.height * this.tileSize.height);
+
+            this.add(this.children[0].getOutline());
         }
 
         update () {
@@ -65,18 +67,20 @@ module DK {
             var scrollAmount = 10;
 
             if (this.cursors.up.isDown) {
-                this.position.add(0, scrollAmount);
+                this.game.camera.y -= scrollAmount
             }
             else if (this.cursors.down.isDown) {
-                this.position.add(0, -scrollAmount);
+                this.game.camera.y += scrollAmount;
             }
 
             if (this.cursors.left.isDown)  {
-                this.position.add(scrollAmount, 0);
+                this.game.camera.x -= scrollAmount;
             }
             else if (this.cursors.right.isDown) {
-                this.position.add(-scrollAmount, 0);
+                this.game.camera.x +=scrollAmount;
             }
+
+
         }
 
         handleMouseMove (e) {

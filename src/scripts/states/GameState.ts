@@ -6,17 +6,8 @@ module DK {
         isoGroup: IsoWorld;
 
         create() {
-            //game.time.advancedTiming = true;
-
-            // Add and enable the plug-in.
-            //game.plugins.add(new Phaser.Plugin.Isometric(game));
-
-            //game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
-            //game.iso.anchor.setTo(0.5, 0.1); // offset the camera
-
-            //game.iso.projector = Phaser.Plugin.Isometric.ISOMETRIC;
-
-            //this.game.input.onDown.add(this.onInputDown, this);
+            // fps toggle
+            game.time.advancedTiming = true;
 
             this.spawnTiles();
         }
@@ -50,10 +41,8 @@ module DK {
             });*/
 
             game.debug.text(game.time.fps || '--', 2, 14, "#a7aebe");
+            game.debug.cameraInfo(game.camera, 32, 32);
             // game.debug.text(Phaser.VERSION, 2, game.world.height - 2, "#ffff00");
         }
-
-
-
     }
 }
