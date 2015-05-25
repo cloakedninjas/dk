@@ -58,7 +58,9 @@ module DK {
             this.position.setTo(xOffset, yOffset);
             this.game.world.setBounds(0, -this.tileSize.height / 2, tiles.width * this.tileSize.width, tiles.height * this.tileSize.height);
 
-            this.add(this.children[0].getOutline());
+            this.add(this.children[5].getOutline());
+
+            //this.add(this.children[21].getOutline());
         }
 
         update () {

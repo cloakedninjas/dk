@@ -6,7 +6,12 @@ module DK {
         tileWidth: number;
         tileHeight: number;
         isoPosition: Phaser.Point;
-        isoBounds: [Phaser.Point];
+        isoBounds: any;
+
+        /**
+         * The height of the wall, 0 if a floor tile
+         */
+        wallHeight: number;
 
         constructor(game, x, y, key, frame) {
             super(game, x, y, key, frame);
@@ -19,7 +24,9 @@ module DK {
             this.position = this.isoToScreen();
 
             // set anchor point based on texture
-            var h = (this.texture.height - this.tileHeight) + (this.tileHeight / 2);
+            this.wallHeight = this.texture.height - this.tileHeight;
+
+            var h = this.wallHeight + (this.tileHeight / 2);
             this.anchor.set(0.5, h / this.texture.height);
         }
 
@@ -41,47 +48,46 @@ module DK {
         }
 
         private setIsoBounds () {
-            this.isoBounds = [
-                new Phaser.Plugin.Isometric.Point3(this.x, this.y, this.z),
-                new Phaser.Plugin.Isometric.Point3(this.x, this.y, this.z + this.height),
-                new Phaser.Plugin.Isometric.Point3(this.x, this.y + this.widthY, this.z),
-                new Phaser.Plugin.Isometric.Point3(this.x, this.y + this.widthY, this.z + this.height),
-                new Phaser.Plugin.Isometric.Point3(this.x + this.widthX, this.y, this.z),
-                new Phaser.Plugin.Isometric.Point3(this.x + this.widthX, this.y, this.z + this.height),
-                new Phaser.Plugin.Isometric.Point3(this.x + this.widthX, this.y + this.widthY, this.z),
-                new Phaser.Plugin.Isometric.Point3(this.x + this.widthX, this.y + this.widthY, this.z + this.height)
+            this.isoBounds = {};
+            var halfWidth = this.width / 2,
+                tileFaceHeight = this.width / 4;
+
+            this.isoBounds.face = [
+                new Phaser.Point(0, tileFaceHeight - this.wallHeight), // bottom
+                new Phaser.Point(-halfWidth, -this.wallHeight),
+                new Phaser.Point(0, -tileFaceHeight - this.wallHeight),
+                new Phaser.Point(halfWidth, -this.wallHeight)
             ];
+
+            if (this.wallHeight > 0) {
+                this.isoBounds.rightWall = [
+                    new Phaser.Point(0, tileFaceHeight),
+                    new Phaser.Point(halfWidth, 0),
+                    new Phaser.Point(halfWidth, -this.wallHeight)
+                ];
+
+                this.isoBounds.leftWall = [
+                    new Phaser.Point(0, tileFaceHeight),
+                    new Phaser.Point(-halfWidth, 0),
+                    new Phaser.Point(-halfWidth, -this.wallHeight)
+                ];
+            }
+
+            console.log(this.isoBounds, tileFaceHeight);
         }
 
         getOutline () {
             if (!this.isoBounds) {
-                var halfWidth = this.width / 2,
-                    halfHeight = this.height / 2;
-
-                console.log(this.x, this.y);
-
-                this.isoBounds = [
-                    new Phaser.Point(this.x, this.y - halfHeight),
-                    new Phaser.Point(this.x + halfWidth, this.y),
-                    new Phaser.Point(this.x, this.y + halfHeight),
-                    new Phaser.Point(this.x - halfWidth, this.y)
-                ];
-
-                console.log(this.isoBounds);
+                this.setIsoBounds();
             }
 
-            var camX = -this.game.camera.x;
-            var camY = -this.game.camera.y;
-
-            var points = this.isoBounds.map(function (p) {
-                p.x += camX;
-                p.y += camY;
+            var points = this.isoBounds.face.map(function (p) {
+                p.x -= this.game.camera.x;
+                p.y -= this.game.camera.y;
                 return p;
             }, this);
 
-            //console.log(points);
-
-            var graphics = new Phaser.Graphics(this.game, points[0].x, points[0].y);
+            var graphics = new Phaser.Graphics(this.game, this.x, this.y);
 
             graphics.clear();
             graphics.lineStyle(2, 0xffffff);
@@ -91,6 +97,34 @@ module DK {
             graphics.lineTo(points[2].x, points[2].y);
             graphics.lineTo(points[3].x, points[3].y);
             graphics.lineTo(points[0].x, points[0].y);
+
+            if (this.isoBounds.rightWall) {
+                var pointsWall = this.isoBounds.rightWall.map(function (p) {
+                    p.x -= this.game.camera.x;
+                    p.y -= this.game.camera.y;
+                    return p;
+                }, this);
+
+                graphics.lineTo(pointsWall[0].x, pointsWall[0].y);
+                graphics.lineTo(pointsWall[1].x, pointsWall[1].y);
+                graphics.lineTo(pointsWall[2].x, pointsWall[2].y);
+
+                graphics.moveTo(points[0].x, points[0].y);
+            }
+
+            if (this.isoBounds.leftWall) {
+                var pointsWall = this.isoBounds.leftWall.map(function (p) {
+                    p.x -= this.game.camera.x;
+                    p.y -= this.game.camera.y;
+                    return p;
+                }, this);
+
+                graphics.lineTo(pointsWall[0].x, pointsWall[0].y);
+                graphics.lineTo(pointsWall[1].x, pointsWall[1].y);
+                graphics.lineTo(pointsWall[2].x, pointsWall[2].y);
+
+                graphics.moveTo(points[0].x, points[0].y);
+            }
 
             return graphics;
         }
