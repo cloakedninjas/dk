@@ -27,8 +27,6 @@ var DK;
             var tiles = mapData.layers[0];
             var tileLookup = {};
             var lastGid = 0;
-            var index;
-            var textureId;
             /**
              * @param tileset.firstgid
              */

@@ -4,8 +4,14 @@ module DK {
     export class IsoWorld extends Phaser.Group {
 
         anchor: Phaser.Point;
-        tileSize: Object;
-        halfTileSize: Object;
+        tileSize: {
+            width: number
+            height: number
+        };
+        halfTileSize: {
+            width: number
+            height: number
+        };
         cursors: Phaser.CursorKeys;
 
         plop: Phaser.Signal;
@@ -30,7 +36,8 @@ module DK {
         }
 
         setTiles (tiles, tileLookup) {
-            var tile;
+            var tile, index, textureId;
+
             for (var y = 0; y < tiles.height; y++) {
                 for (var x = 0; x < tiles.width; x++) {
 
@@ -77,13 +84,9 @@ module DK {
         }
 
         screenToIso (x, y) {
-            var isoX = (x / (this.tileSize.width / 2) + y / (this.tileSize.width / 2) / 2);
+            var isoX = (x / (this.halfTileSize.width) + y / (this.halfTileSize.width) / 2);
 
-            console.log(isoX);
-            /*var x = point.x - (this.game.world.width * this.anchor.x);
-            var y = point.y - (this.game.world.height * this.anchor.y) + z;*/
-
-            //return new Phaser.Point(posX, posY);
+            //console.log(isoX);
         }
 
     }

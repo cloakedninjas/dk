@@ -26,16 +26,14 @@ module DK {
             var tiles = mapData.layers[0];
             var tileLookup = {};
             var lastGid = 0;
-            var index;
-            var textureId;
 
             /**
              * @param tileset.firstgid
              */
-            _.each(mapData.tilesets, function (tileset) {
+            _.each(mapData.tilesets, function (tileset: any) {
                 lastGid = tileset.firstgid;
 
-                _.each(tileset.tileproperties, function (properties, tileId) {
+                _.each(tileset.tileproperties, function (properties: any, tileId: string) {
                     tileLookup[lastGid + parseInt(tileId)] = properties.name;
                 });
 
