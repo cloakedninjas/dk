@@ -87,12 +87,20 @@ module DK {
 
         handleMouseMove (e) {
             var isoCoords = this.screenToIso(e.screenX, e.screenY);
+            //console.log(isoCoords);
         }
 
         screenToIso (x, y) {
-            var isoX = (x / (this.halfTileSize.width) + y / (this.halfTileSize.width) / 2);
+            //var isoX = (x / (this.halfTileSize.width) + y / (this.halfTileSize.width) / 2);
 
-            //console.log(isoX);
+            // adjust for camera position
+            x += this.game.camera.position.x;
+            y += this.game.camera.position.y;
+
+            var isoX = y / this.tileSize.height + x / (2 * this.tileSize.width);
+            var isoY = y / this.tileSize.height - x / (2 * this.tileSize.width);
+
+            return [isoX, isoY];
         }
 
     }
