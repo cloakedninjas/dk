@@ -16,6 +16,8 @@ module DK {
             //this.load.setPreloadSprite(this.preloadBar);
 
             this.load.json('map-data', 'maps/test1.json');
+            //this.load.tilemap('level1', 'assets/tilemaps/level1.json', null, Phaser.Tilemap.TILED_JSON);
+
 
             this.load.image('dirt-floor-1', 'images/tiles/dirt-floor.png');
             this.load.image('stone-floor-1', 'images/tiles/stone-floor.png');

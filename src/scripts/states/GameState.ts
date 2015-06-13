@@ -10,6 +10,15 @@ module DK {
             game.time.advancedTiming = true;
 
             this.spawnTiles();
+
+/*
+            this.map = this.game.add.tilemap('test1');
+            //the first parameter is the tileset name as specified in Tiled, the second is the key to the asset
+            this.map.addTilesetImage('Floor', 'dirt-floor-1');
+            //create layer
+            this.backgroundlayer = this.map.createLayer('backgroundLayer');
+*/
+
         }
 
         spawnTiles() {
