@@ -1,5 +1,3 @@
-///<reference path="../../reference.d.ts"/>
-
 module DK {
     export class IsoTile extends Phaser.Sprite {
 

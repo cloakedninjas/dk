@@ -1,6 +1,6 @@
 .idea
-Thumbs.db
+.tscache
+.DS_Store
+src/scripts/.baseDir.ts
 node_modules
-src/components
-src/scripts/**/*.js
-src/scripts/**/*.js.map
+public

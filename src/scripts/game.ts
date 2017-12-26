@@ -1,29 +1,17 @@
-///<reference path="../reference.d.ts"/>
+/// <reference path="../refs.d.ts" />
 
 module DK {
     export class Game extends Phaser.Game {
 
         constructor() {
-            var dpr = 1, //window.devicePixelRatio,
-                width = window.innerWidth * dpr,
-                height = window.innerHeight * dpr;
+            super();
 
-            super(width, height, Phaser.CANVAS, 'content', null);
-
-            /*
-             this.canvas.width *= window.devicePixelRatio;
-             this.canvas.height *= window.devicePixelRatio;
-
-             this.canvas.style.width = width + 'px';
-             this.canvas.style.height = height + 'px';
-             */
-
-            this.state.add('Preloader', PreloaderState, false);
-            this.state.add('Game', GameState, false);
-
-            this.state.start('Preloader');
+            this.state.add('preloader', State.Preloader, true);
+            this.state.add('game', State.Game);
         }
     }
 }
 
-var game;
+// export Game to window
+var Game = DK.Game;
+

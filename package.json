@@ -1,14 +1,28 @@
 {
-  "name": "dungeon-keeper",
-  "version": "1.0.0",
-  "description": "",
+  "name": "dk",
+  "version": "0.0.1",
+  "description": "Iso stuff",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "http-server": "^0.8.0"
-  }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloakedninjas/phaser-typescript-boilerplate.git"
+  },
+  "author": "cloakedninjas",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cloakedninjas/phaser-typescript-boilerplate/issues"
+  },
+  "homepage": "https://github.com/cloakedninjas/phaser-typescript-boilerplate#readme",
+  "dependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-ts": "^5.5.1",
+    "phaser-ce": "^2.9.4"
+  },
+  "devDependencies": {}
 }
