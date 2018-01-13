@@ -1,8 +1,8 @@
-module DK {
+module TDG {
+    import Graphics = Phaser.Graphics;
     export class IsoWorld extends Phaser.Group {
 
-        children: [IsoTile];
-        anchor: Phaser.Point;
+        children: [IsoSprite];
         tileSize: {
             width: number
             height: number
@@ -11,16 +11,19 @@ module DK {
             width: number
             height: number
         };
+        worldSize: {
+            width: number
+            height: number
+        };
         cursors: Phaser.CursorKeys;
+        activeTileMaker: Graphics;
 
-        plop: Phaser.Signal;
-
-        constructor (game: Phaser.Game, parent?: PIXI.DisplayObjectContainer, name?: string, addToStage?: boolean, enableBody?: boolean, physicsBodyType?: number) {
+        constructor (game: Phaser.Game, tileWidth:number, tileHeight:number, parent?: PIXI.DisplayObjectContainer, name?: string, addToStage?: boolean, enableBody?: boolean, physicsBodyType?: number) {
             super(game, parent, name, addToStage, enableBody, physicsBodyType);
 
             this.tileSize = {
-                width: 128,
-                height: 64
+                width: tileWidth,
+                height: tileHeight
             };
 
             this.halfTileSize = {
@@ -30,41 +33,49 @@ module DK {
 
             // bind inputs
             this.cursors = game.input.keyboard.createCursorKeys();
-
-            game.input.addMoveCallback(this.handleMouseMove, this);
+            //game.input.addMoveCallback(this.handleMouseMove, this);
         }
 
-        setTiles (tiles, tileLookup) {
-            var tile, index, textureId;
+        setTiles (tiles) {
+            let tile, index, textureId;
 
-            for (var y = 0; y < tiles.height; y++) {
-                for (var x = 0; x < tiles.width; x++) {
+            for (let y = 0; y < tiles.height; y++) {
+                for (let x = 0; x < tiles.width; x++) {
 
                     index = (y * tiles.width) + x;
                     textureId = tiles.data[index];
 
                     if (textureId !== 0) {
-                        tile = new IsoTile(this.game, x, y, tileLookup[textureId], 0);
-                        this.add(tile);
+                        tile = new IsoSprite(this.game, this, x, y, State.Preloader.TILESET_KEY + textureId, 0);
+                        this.add(tile, undefined, undefined, false);
                     }
                 }
             }
 
-            var xOffset = (tiles.width * this.tileSize.width) / 2,
-                yOffset = 0; //(tiles.height * this.tileSize.height) / 2;
+            this.worldSize = {
+                width: tiles.width,
+                height: tiles.height
+            };
 
-            this.position.setTo(xOffset, yOffset);
-            this.game.world.setBounds(0, -this.tileSize.height / 2, tiles.width * this.tileSize.width, tiles.height * this.tileSize.height);
+            let boundsTopLeftX = this.isoToScreen(0, (tiles.height - 1)).x - this.halfTileSize.width,
+                boundsTopLeftY = -this.children[0].height,
+                boundsBottomRightX = this.isoToScreen((tiles.width - 1), 0).x + this.halfTileSize.width,
+                boundsBottomRightY = this.isoToScreen((tiles.width - 1), (tiles.height - 1)).y + this.halfTileSize.height,
 
-            this.add(this.children[5].getOutline());
+                boundsWidth = Math.abs(boundsTopLeftX) + boundsBottomRightX,
+                boundsHeight = Math.abs(boundsTopLeftY) + boundsBottomRightY;
 
-            //this.add(this.children[21].getOutline());
+            this.game.world.setBounds(boundsTopLeftX, boundsTopLeftY, boundsWidth, boundsHeight);
+
+            //this.add(this.children[2].getOutline());
+            //this.add(this.children[3].getOutline());
+            //this.add(this.children[5].getOutline());
         }
 
         update () {
             super.update();
 
-            var scrollAmount = 10;
+            let scrollAmount = 10;
 
             if (this.cursors.up.isDown) {
                 this.game.camera.y -= scrollAmount
@@ -80,26 +91,99 @@ module DK {
                 this.game.camera.x +=scrollAmount;
             }
 
+            let isoCoords = this.screenToIso(this.game.input.mousePointer.x, this.game.input.mousePointer.y);
 
+            //this.game.debug.text(this.game.input.mousePointer.x + ', ' + this.game.input.mousePointer.y, 2, 14, "#a7aebe");
+            this.game.debug.text(isoCoords[0] + ', ' + isoCoords[1], 2, 28, "#a7aebe");
+
+            this.children.forEach(function (child) {
+                child.update();
+            });
         }
 
         handleMouseMove (e) {
-            var isoCoords = this.screenToIso(e.screenX, e.screenY);
-            //console.log(isoCoords);
+            /*let isoCoords = this.screenToIso(e.clientX, e.clientY);
+
+            if (isoCoords[0] >= 0 && isoCoords[1] >= 0) {
+                // get tile from index
+                let activeTile = this.getTileAt(isoCoords[0], isoCoords[1]);
+
+                if (activeTile !== this.hoveredTile) {
+                    if (this.hoveredTile) {
+                        this.hoveredTile.setHiglight(false);
+                    }
+
+                    this.hoveredTile = activeTile;
+                    this.hoveredTile.setHiglight(true);
+
+                    if (this.tileHighlight) {
+                        this.remove(this.tileHighlight);
+                    }
+
+                    this.tileHighlight = tile.getOutline();
+                    this.add(this.tileHighlight);
+                }
+            }*/
         }
 
         screenToIso (x, y) {
-            //var isoX = (x / (this.halfTileSize.width) + y / (this.halfTileSize.width) / 2);
-
             // adjust for camera position
             x += this.game.camera.position.x;
             y += this.game.camera.position.y;
 
-            var isoX = y / this.tileSize.height + x / (2 * this.tileSize.width);
-            var isoY = y / this.tileSize.height - x / (2 * this.tileSize.width);
+            // adjust for tile height
+            y -= this.halfTileSize.height;
 
-            return [isoX, isoY];
+            //let x2 = (x / this.halfTileSize.width + (y / this.halfTileSize.height)) / 2;
+            //let y2 = (y / this.halfTileSize.height - (y / this.halfTileSize.width)) / 2;
+
+            let x2 = Math.round(x / this.tileSize.width + y / this.tileSize.height) + 1;
+            let y2 = Math.round(y / this.tileSize.height - x / this.tileSize.width) + 1;
+
+            return [x2, y2];
         }
 
+        isoToScreen (x, y) {
+            let posX = (x - y) * this.halfTileSize.width;
+            let posY = (x + y) * this.halfTileSize.height;
+
+            return new Phaser.Point(posX, posY);
+        }
+
+        getTileAt (x, y): IsoSprite {
+            if (y === 0) {
+                return this.children[x];
+            }
+
+            return this.children[(y * this.worldSize.width) + x];
+        }
+
+        add(child, silent?, index?, resort?: boolean) {
+            let c = super.add(child, silent, index);
+
+            if (resort !== false) {
+                this.depthSort();
+            }
+
+            return c;
+        }
+
+        depthSort() {
+            this.children.sort(function (a, b) {
+               if (a.isoPosition.y > b.isoPosition.y) {
+                   return 1;
+               } else if (a.isoPosition.y < b.isoPosition.y) {
+                   return -1;
+               } else if (a.isoPosition.x > b.isoPosition.x) {
+                   return 1;
+               } else if (a.isoPosition.x < b.isoPosition.x) {
+                   return -1;
+               } else if (a.z > b.z) {
+                   return -1;
+               }
+
+               return 0;
+            });
+        }
     }
 }

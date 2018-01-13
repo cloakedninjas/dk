@@ -1,33 +1,45 @@
-module DK.State {
+module TDG.State {
     export class Game extends Phaser.State {
         isoGroup: IsoWorld;
+        enemyPath: Array<Phaser.Point>;
+        truck: Entity.Truck;
 
         create() {
             // fps toggle
             this.game.time.advancedTiming = true;
-
             this.spawnTiles();
 
-/*
-            this.map = this.game.add.tilemap('test1');
-            //the first parameter is the tileset name as specified in Tiled, the second is the key to the asset
-            this.map.addTilesetImage('Floor', 'dirt-floor-1');
-            //create layer
-            this.backgroundlayer = this.map.createLayer('backgroundLayer');
-*/
+            let path = [
+                [4,9],
+                [4,2],
+                [9,2],
+                [9,5],
+                [14,5],
+                [14,1],
+                [18,1],
+                [18,4],
+                [19,4]
+            ];
 
+            this.enemyPath = [];
+
+            path.forEach(function (coords) {
+               this.enemyPath.push(new Phaser.Point(coords[0], coords[1]));
+            }, this);
+
+            //this.truck = new Entity.Truck(this.game, this.isoGroup, path[0][0], path[0][1]);
+            this.truck = new Entity.Truck(this.game, this.isoGroup, 6, 7);
+            this.isoGroup.add(this.truck);
         }
 
         spawnTiles() {
-            var mapData = this.game.cache.getJSON('map-data');
-            var tiles = mapData.layers[0];
-            var tileLookup = {};
-            var lastGid = 0;
+            let map = this.game.cache.getTilemapData('level1').data;
 
-            /**
-             * @param tileset.firstgid
-             */
-            mapData.tilesets.forEach(function (tileset: any) {
+            let tiles = map.layers[0];
+            let tileLookup = {};
+            let lastGid = 0;
+
+            /*map.tilesets.forEach(function (tileset: any) {
                 lastGid = tileset.firstgid;
 
                 for (var key in tileset.tileproperties) {
@@ -35,21 +47,15 @@ module DK.State {
 
                     tileLookup[lastGid + parseInt(key)] = properties.name;
                 }
-            });
-
-            this.isoGroup = new IsoWorld(this.game);
-            this.isoGroup.setTiles(tiles, tileLookup);
-        }
-
-
-        render () {
-            /*this.isoGroup.forEach(function (tile) {
-                game.debug.body(tile, 'rgba(189, 221, 235, 0.6)', false);
             });*/
 
+            this.isoGroup = new IsoWorld(this.game, map.tilewidth, map.tileheight);
+            this.isoGroup.setTiles(tiles);
+        }
+
+        render () {
             this.game.debug.text(this.game.time.fps.toString(), 2, 14, "#a7aebe");
-            this.game.debug.cameraInfo(this.game.camera, 32, 32);
-            // game.debug.text(Phaser.VERSION, 2, game.world.height - 2, "#ffff00");
+            //this.game.debug.cameraInfo(this.game.camera, 32, 32);
         }
     }
 }

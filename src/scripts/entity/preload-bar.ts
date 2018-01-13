@@ -1,4 +1,4 @@
-module DK.Entity {
+module TDG.Entity {
     export class PreloadBar {
         game:Game;
         width:number;

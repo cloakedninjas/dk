@@ -1,10 +1,10 @@
 /// <reference path="../refs.d.ts" />
 
-module DK {
+module TDG {
     export class Game extends Phaser.Game {
 
         constructor() {
-            super();
+            super(window.innerWidth, window.innerHeight);
 
             this.state.add('preloader', State.Preloader, true);
             this.state.add('game', State.Game);
@@ -13,5 +13,5 @@ module DK {
 }
 
 // export Game to window
-var Game = DK.Game;
+var Game = TDG.Game;
 
